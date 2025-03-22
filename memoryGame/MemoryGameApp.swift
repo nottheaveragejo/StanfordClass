@@ -8,9 +8,11 @@ import SwiftUI
 
 @main
 struct MemoryGameApp: App {
+    @StateObject private var viewModel = MemoryGameViewModel()
     var body: some Scene {
         WindowGroup {
-            MemoryGameView()
+            MemoryGameView(viewModel: viewModel
+            )
         }
     }
 }
