@@ -87,6 +87,7 @@ struct MemoryGameView: View {
                     CardView(viewModel: viewModel, card: viewModel.cardModels[card])
                 }
             }
+            .padding(.horizontal)
         }
     }
     
@@ -103,15 +104,21 @@ struct MemoryGameView: View {
         var body: some View {
             let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
             VStack {
-                ZStack {
-                    base.fill(!card.isFaceUp ? Color.white :  Color.black)
-                    base.stroke(!card.isFaceUp ? .black : .blue, lineWidth: 2)
-                    Text(card.content)
-                        .font(Font.system(size: 60))
-                    
+                    base.fill(card.isMatched ? Color.white : Color.black)
+                        .opacity(card.isMatched ? 1 : 0)
+                        .overlay(content: {
+                            ZStack {
+                                base.fill(card.isFaceUp ? Color.white :  Color.black)
+                                base.stroke(card.isFaceUp ? .black : .purple, lineWidth: 3)
+                                Text(card.isFaceUp ? card.content : "")
+                                    .font(Font.system(size: 60))
+                        }
+                            .opacity(card.isMatched ? 0 : 1)
                 }
+                                 )
                 .aspectRatio(2/3, contentMode: .fit)
             }
+            .padding(.bottom, 10)
             .onTapGesture {
                 viewModel.handleCardWasTapped(cardID: card.id)
             }

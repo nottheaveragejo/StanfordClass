@@ -10,7 +10,8 @@ import SwiftUICore
 
 struct MemoryGameModel<CardContent> where CardContent: Equatable {
     private var singleCardSelectedIndex: Int? = nil
-    var cardModels: [CardModel] = []
+    private var secondCardSelectedIndex: Int? = nil
+    lazy var cardModels: [CardModel] = []
     private var cardsContent: [CardContent]
     private var numberOfPairsOfCards: Int
 
@@ -22,9 +23,23 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     // if not matched, turn card back around
     mutating func chooseACard(at cardID: String) {
         let index = self.cardModels.firstIndex(where: { $0.id == cardID})
-        self.cardModels[index!].isFaceUp.toggle()
-        print("test 1 \(self.cardModels[index!].isFaceUp)")
-
+        if singleCardSelectedIndex == nil {
+            singleCardSelectedIndex = index
+            self.cardModels[index!].isFaceUp = true
+        } else {
+            var potentialMatch = self.cardModels[index!]
+            var previousCard = self.cardModels[singleCardSelectedIndex!]
+            print("test potentialMatch \(potentialMatch) previousCard \(previousCard)")
+            self.cardModels[index!].isFaceUp = true
+            if potentialMatch.content == previousCard.content {
+                self.cardModels[index!].isMatched = true
+                self.cardModels[singleCardSelectedIndex!].isMatched = true
+                singleCardSelectedIndex = nil
+            } else {
+                self.cardModels[singleCardSelectedIndex!].isFaceUp = false
+                singleCardSelectedIndex = index
+            }
+        }
     }
     
     init(cardsContent: [CardContent], numberOfPairsOfCards: Int) {
@@ -66,7 +81,6 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     
     struct CardModel: Identifiable,Equatable {
         var id: String
-        
         var isFaceUp: Bool = false
         var isMatched: Bool = false
         var content: CardContent
