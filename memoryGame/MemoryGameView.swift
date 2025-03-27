@@ -13,12 +13,13 @@ struct MemoryGameView: View {
     init(viewModel: MemoryGameViewModel) {
         self.viewModel = viewModel
     }
-
+    
     var body: some View {
         VStack {
             cardsView
             themeButtons
             numberOfCardsView
+            Text("Score \(viewModel.score)")
             Button {
                 viewModel.shuffle()
             } label: {
@@ -91,12 +92,11 @@ struct MemoryGameView: View {
         }
     }
     
-    
     private struct CardView: View {
         typealias CardModel = MemoryGameModel<String>.CardModel
         let card: CardModel
         @ObservedObject private var viewModel: MemoryGameViewModel
-
+        
         init(viewModel: MemoryGameViewModel, card: CardModel) {
             self.viewModel = viewModel
             self.card = card
@@ -104,19 +104,19 @@ struct MemoryGameView: View {
         var body: some View {
             let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
             VStack {
-                    base.fill(card.isMatched ? Color.white : Color.black)
-                        .opacity(card.isMatched ? 1 : 0)
-                        .overlay(content: {
-                            ZStack {
-                                base.fill(card.isFaceUp ? Color.white :  Color.black)
-                                base.stroke(card.isFaceUp ? .black : .purple, lineWidth: 3)
-                                Text(card.isFaceUp ? card.content : "")
-                                    .font(Font.system(size: 60))
+                base.fill(card.isMatched ? Color.white : Color.black)
+                    .opacity(card.isMatched ? 1 : 0)
+                    .overlay(content: {
+                        ZStack {
+                            base.fill(card.isFaceUp ? Color.white :  Color.indigo)
+                            base.stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
+                            Text(card.isFaceUp ? card.content : "")
+                                .font(Font.system(size: 60))
                         }
-                            .opacity(card.isMatched ? 0 : 1)
-                }
-                                 )
-                .aspectRatio(2/3, contentMode: .fit)
+                        .opacity(card.isMatched ? 0 : 1)
+                    }
+                    )
+                    .aspectRatio(2/3, contentMode: .fit)
             }
             .padding(.bottom, 10)
             .onTapGesture {

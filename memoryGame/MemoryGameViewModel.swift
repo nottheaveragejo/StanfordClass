@@ -9,16 +9,18 @@ import Foundation
 
 class MemoryGameViewModel: ObservableObject {
     typealias CardModel = MemoryGameModel<String>.CardModel
-    // Store current theme
-    @Published var theme: Theme
     private var model: MemoryGameModel<String>
+    
+    @Published var theme: Theme
     @Published var numberOfPairsOfCards = 5
     @Published var cardModels: [CardModel]
+    @Published var score = 0
 
     init() {
         self.theme = .japanese
         self.model = MemoryGameModel(cardsContent: Theme.japanese.content, numberOfPairsOfCards: 5)
         cardModels =  model.cardModels
+        self.score = model.score
     }
     
     func shuffle() {
@@ -47,6 +49,7 @@ class MemoryGameViewModel: ObservableObject {
     func handleCardWasTapped(cardID: String) {
         model.chooseACard(at: cardID)
         cardModels = model.cardModels
+        score = model.score
     }
     
     enum Theme: CaseIterable {
@@ -65,6 +68,4 @@ class MemoryGameViewModel: ObservableObject {
             }
         }
     }
-    
-    
 }
