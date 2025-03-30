@@ -35,25 +35,13 @@ struct MemoryGameView: View {
             Text("Change Theme")
             HStack {
                 Button {
-                    viewModel.theme = .japanese
-                    viewModel.updateCards()
+                    viewModel.changeCardTheme()
                 } label: {
-                    Text("🇯🇵")
-                        .font(Font.system(size: 40))
-                }
-                Button {
-                    viewModel.theme = .british
-                    viewModel.updateCards()
-                } label: {
-                    Text("🇬🇧")
-                        .font(Font.system(size: 40))
-                }
-                Button {
-                    viewModel.theme = .french
-                    viewModel.updateCards()
-                } label: {
-                    Text("🇫🇷")
-                        .font(Font.system(size: 40))
+                    VStack {
+                        Text("🌍")
+                            .font(Font.system(size: 40))
+                        Text("Choose a theme")
+                    }
                 }
             }
         }

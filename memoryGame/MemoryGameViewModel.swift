@@ -28,7 +28,8 @@ class MemoryGameViewModel: ObservableObject {
         cardModels =  model.cardModels
     }
     
-    func updateCards() {
+    func changeCardTheme() {
+        theme = Theme.allCases.randomElement() ?? .thailand
         model.updateCardContent(themeContent: theme.content)
         cardModels =  model.cardModels
     }
@@ -56,6 +57,11 @@ class MemoryGameViewModel: ObservableObject {
         case japanese
         case french
         case british
+        case peru
+        case american
+        case thailand
+        case italy
+        case vietnam
         
         var content: [String] {
             switch self {
@@ -65,6 +71,29 @@ class MemoryGameViewModel: ObservableObject {
                 ["🇫🇷", "🥖", "🧑‍🎨", "🍷", "👗", "👩🏼‍🎨", "🐌", "🍇"]
             case .british:
                 ["🍤", "🇬🇧", "🐑", "🍟", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🍫", "🫖"]
+            case .peru:
+                ["⛰️", "🦙", "🥾", "🏕️", "🇵🇪", "🍲", "🐒", "🌿"]
+            case .american:
+                ["🇺🇸", "🔫", "🍔", "⚠", "🥃", "🌽", "🙈", "🌭"]
+            case .thailand:
+                ["🐘", "🦛", "🏖️", "🥥", "🇹🇭", "🥤", "🛕", "🐷"]
+            case .italy:
+                ["🇮🇹", "🍕", "🍝", "☕️", "⛪️", "🍷", "🐰", "🌿"]
+            case .vietnam:
+                ["🇻🇳", "🍜", "🏍️", "☕️", "🥝", "🌄", "🚢", "🌸"]
+            }
+        }
+        
+        var numberOfCards: Int {
+            switch self {
+            case .japanese:
+                8
+            case .french:
+                6
+            case .british:
+                4
+            default:
+                3
             }
         }
     }
