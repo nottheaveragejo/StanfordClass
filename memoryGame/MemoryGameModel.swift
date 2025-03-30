@@ -9,7 +9,6 @@ import Foundation
 import SwiftUICore
 
 struct MemoryGameModel<CardContent> where CardContent: Equatable {
-    private var singleCardSelectedIndex: Int? = nil
     private var secondCardSelectedIndex: Int? = nil
     var cardModels: [CardModel] = []
     private var cardsContent: [CardContent]
@@ -22,31 +21,57 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         createCardModels()
     }
     
+    private var singleCardSelectedIndex: Int? {
+        get {
+            let faceUpIndices = cardModels.indices.filter { index in cardModels[index].isFaceUp }
+            return faceUpIndices.count == 1 ? faceUpIndices.first : nil
+        }
+        set { cardModels.indices.forEach { cardModels[$0].isFaceUp = (newValue == $0)} }
+    }
+    
     // TODO: delay logic to flip card over when the cards dont match
     mutating func chooseACard(at cardID: String) {
-        let index = self.cardModels.firstIndex(where: { $0.id == cardID})
-        if singleCardSelectedIndex == nil {
-            singleCardSelectedIndex = index
-            self.cardModels[index!].isFaceUp = true
-        } else {
-            let potentialMatch = self.cardModels[index!]
-            let previousCard = self.cardModels[singleCardSelectedIndex!]
-            self.cardModels[index!].isFaceUp = true
-            if potentialMatch.content == previousCard.content {
-                self.cardModels[index!].isMatched = true
-                self.cardModels[singleCardSelectedIndex!].isMatched = true
-                singleCardSelectedIndex = nil
-                score += 2
-            } else {
-                self.cardModels[singleCardSelectedIndex!].isFaceUp = false
-                singleCardSelectedIndex = index
-                score -= 1
+        if let index = self.cardModels.firstIndex(where: { $0.id == cardID}) {
+            if !cardModels[index].isFaceUp && !cardModels[index].isMatched {
+                if let potentialMatchIndex = singleCardSelectedIndex {
+                    if cardModels[index].content == cardModels[potentialMatchIndex].content {
+                        cardModels[index].isMatched = true
+                        cardModels[potentialMatchIndex].isMatched = true
+                        score += 2
+                    }
+                } else {
+                    for index in cardModels.indices {
+                        cardModels[index].isFaceUp = false
+                    }
+                    singleCardSelectedIndex = index
+                   // score -= 1
+                }
+                cardModels[index].isFaceUp = true
             }
         }
+//        if singleCardSelectedIndex == nil {
+//            singleCardSelectedIndex = index
+//            self.cardModels[index!].isFaceUp = true
+//        } else {
+//            let potentialMatch = self.cardModels[index!]
+//            let previousCard = self.cardModels[singleCardSelectedIndex!]
+//            self.cardModels[index!].isFaceUp = true
+//            if potentialMatch.content == previousCard.content {
+//                self.cardModels[index!].isMatched = true
+//                self.cardModels[singleCardSelectedIndex].isMatched = true
+//                singleCardSelectedIndex = nil
+//                score += 2
+//            } else {
+//                self.cardModels[singleCardSelectedIndex!].isFaceUp = false
+//                singleCardSelectedIndex = index
+//                score -= 1
+//            }
+//        }
     }
     
     mutating func updatePairsOfCards(cards numberOfPairsOfCards : Int) {
         self.numberOfPairsOfCards = numberOfPairsOfCards
+        createCardModels(numberOfPairsOFCards: self.numberOfPairsOfCards)
     }
     
     mutating func updateCardContent(themeContent: [String]) {
@@ -62,11 +87,16 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         }
     }
     
-    mutating func createCardModels() {
-        var updatedCardModels = cardModels
-        self.cardsContent.forEach { cardContent in
-            updatedCardModels.append(CardModel(id:"\(cardContent.self)1", content: cardContent.self))
-            updatedCardModels.append(CardModel(id:"\(cardContent.self)2", content: cardContent.self))
+    mutating func createCardModels(numberOfPairsOFCards: Int = 5) {
+        var updatedCardModels: [CardModel] = []
+        if self.numberOfPairsOfCards == 0 {
+            cardModels = []
+            return
+        }
+        for index in 0...self.numberOfPairsOfCards - 1 {
+            let cardContent = cardsContent[index]
+            updatedCardModels.append(CardModel(id:"\(cardContent)1", content: cardContent))
+            updatedCardModels.append(CardModel(id:"\(cardContent)2", content: cardContent))
         }
         cardModels = updatedCardModels
     }

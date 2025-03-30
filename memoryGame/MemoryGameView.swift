@@ -17,31 +17,33 @@ struct MemoryGameView: View {
     var body: some View {
         VStack {
             cardsView
-            themeButtons
+            controlButtons
             numberOfCardsView
             Text("Score \(viewModel.score)")
-            Button {
-                viewModel.shuffle()
-            } label: {
-                Text("shuffle")
-                    .font(Font.system(size: 40))
-            }
+                .font(.headline)
         }
         .padding()
     }
     
-    private var themeButtons: some View {
-        VStack {
-            Text("Change Theme")
-            HStack {
-                Button {
-                    viewModel.changeCardTheme()
-                } label: {
-                    VStack {
-                        Text("🌍")
-                            .font(Font.system(size: 40))
-                        Text("Choose a theme")
-                    }
+    private var controlButtons: some View {
+        HStack {
+            Button {
+                viewModel.changeCardTheme()
+            } label: {
+                VStack {
+                    Text("🌍")
+                        .font(Font.system(size: 40))
+                    Text("Current theme: \(viewModel.themeName)")
+                }
+            }
+            
+            Button {
+                viewModel.shuffle()
+            } label: {
+                VStack {
+                    Text("🃗")
+                        .font(Font.system(size: 40))
+                    Text("shuffle")
                 }
             }
         }
@@ -49,7 +51,6 @@ struct MemoryGameView: View {
     
     private var numberOfCardsView: some View {
         return VStack {
-            Text("Number of Pairs of Cards:\(viewModel.numberOfPairsOfCards)")
             HStack {
                 Button {
                     viewModel.updateNumberOfCards(shouldAdd: false)
@@ -65,7 +66,9 @@ struct MemoryGameView: View {
                         .resizable()
                         .frame(width: 50, height: 50)
                 }
+                
             }
+            Text("Number of Pairs of Cards:\(viewModel.numberOfPairsOfCards)")
         }
     }
     
@@ -92,20 +95,18 @@ struct MemoryGameView: View {
         var body: some View {
             let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
             VStack {
-                base.fill(card.isMatched ? Color.white : Color.black)
-                    .opacity(card.isMatched ? 1 : 0)
+                base.fill(card.isFaceUp ? Color.white : Color.black)
                     .overlay(content: {
                         ZStack {
-                            base.fill(card.isFaceUp ? Color.white :  Color.indigo)
+                            base.fill(card.isFaceUp ? Color.white : Color.indigo)
                             base.stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
                             Text(card.isFaceUp ? card.content : "")
                                 .font(Font.system(size: 60))
                         }
-                        .opacity(card.isMatched ? 0 : 1)
-                    }
-                    )
+                    })
                     .aspectRatio(2/3, contentMode: .fit)
             }
+            .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
             .padding(.bottom, 10)
             .onTapGesture {
                 viewModel.handleCardWasTapped(cardID: card.id)
