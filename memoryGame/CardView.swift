@@ -9,8 +9,8 @@ import SwiftUI
 
 struct CardView: View {
     typealias CardModel = MemoryGameModel<String>.CardModel
-    let card: CardModel
     @ObservedObject private var viewModel: MemoryGameViewModel
+    let card: CardModel
     
     init(viewModel: MemoryGameViewModel, card: CardModel) {
         self.viewModel = viewModel
@@ -18,20 +18,27 @@ struct CardView: View {
     }
     var body: some View {
         let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
-        VStack {
-            base.fill(card.isFaceUp ? Color.white : Color.black)
-                .overlay(content: {
-                    ZStack {
-                        base.fill(card.isFaceUp ? Color.white : Color.indigo)
-                        base.stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
-                        Text(card.isFaceUp ? card.content : "")
-                            .font(Font.system(size: 60))
-                    }
-                })
-                .aspectRatio(2/3, contentMode: .fit)
+        ZStack {
+            Group {
+                base
+                    .fill(card.isFaceUp ? .white : .indigo)
+                    .stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
+                Circle()
+                    .opacity(0.3)
+                    .overlay(content: {
+                        Text(card.content)
+                            .font(Font.system(size: 100))
+                            .minimumScaleFactor(0.01)
+                            .aspectRatio(1, contentMode: .fit)
+                            .padding(10)
+                    })
+                    .opacity(card.isFaceUp ? 1 : 0)
+                    .padding(5)
+            }
+            .aspectRatio(2/3, contentMode: .fit)
+            
         }
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
-        .padding(.bottom, 10)
         .onTapGesture {
             viewModel.handleCardWasTapped(cardID: card.id)
         }
@@ -45,7 +52,7 @@ struct CardView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             HStack {
-                CardView(viewModel: viewModel, card: Card(id: "1", isFaceUp: true, content: "A"))
+                CardView(viewModel: viewModel, card: Card(id: "1", isFaceUp: true, content: "❤️"))
                 CardView(viewModel: viewModel, card: Card(id: "2", isFaceUp: false, content: "A"))
             }
             HStack {
@@ -53,6 +60,6 @@ struct CardView_Previews: PreviewProvider {
                 CardView(viewModel: viewModel, card: Card(id: "1", isMatched: false, content: "A"))
             }
         }
-
+        
     }
 }

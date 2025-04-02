@@ -13,7 +13,7 @@ class MemoryGameViewModel: ObservableObject {
     
     @Published var theme: Theme
     @Published var themeName: String
-    @Published var numberOfPairsOfCards = 5
+    @Published var numberOfPairsOfCards: Int
     @Published var cardModels: [CardModel]
     @Published var score = 0
 
@@ -22,6 +22,7 @@ class MemoryGameViewModel: ObservableObject {
         self.themeName = Theme.japanese.name
         self.model = MemoryGameModel(cardsContent: Theme.japanese.content, numberOfPairsOfCards: 5)
         cardModels =  model.cardModels
+        self.numberOfPairsOfCards = 5
         self.score = model.score
     }
     
