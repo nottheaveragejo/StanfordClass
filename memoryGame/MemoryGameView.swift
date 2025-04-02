@@ -21,6 +21,7 @@ struct MemoryGameView: View {
             numberOfCardsView
             Text("Score \(viewModel.score)")
                 .font(.headline)
+            Text("Current theme: \(viewModel.themeName)")
         }
         .padding()
     }
@@ -33,12 +34,15 @@ struct MemoryGameView: View {
                 VStack {
                     Text("🌍")
                         .font(Font.system(size: 40))
-                    Text("Current theme: \(viewModel.themeName)")
+                    Text("Change theme")
                 }
             }
+            .padding(.trailing, 20)
             
             Button {
-                viewModel.shuffle()
+                withAnimation {
+                    viewModel.shuffle()
+                }
             } label: {
                 VStack {
                     Text("🃗")
@@ -46,6 +50,7 @@ struct MemoryGameView: View {
                     Text("shuffle")
                 }
             }
+            .padding(.leading, 20)
         }
     }
     
@@ -80,37 +85,6 @@ struct MemoryGameView: View {
                 }
             }
             .padding(.horizontal)
-        }
-    }
-    
-    private struct CardView: View {
-        typealias CardModel = MemoryGameModel<String>.CardModel
-        let card: CardModel
-        @ObservedObject private var viewModel: MemoryGameViewModel
-        
-        init(viewModel: MemoryGameViewModel, card: CardModel) {
-            self.viewModel = viewModel
-            self.card = card
-        }
-        var body: some View {
-            let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
-            VStack {
-                base.fill(card.isFaceUp ? Color.white : Color.black)
-                    .overlay(content: {
-                        ZStack {
-                            base.fill(card.isFaceUp ? Color.white : Color.indigo)
-                            base.stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
-                            Text(card.isFaceUp ? card.content : "")
-                                .font(Font.system(size: 60))
-                        }
-                    })
-                    .aspectRatio(2/3, contentMode: .fit)
-            }
-            .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
-            .padding(.bottom, 10)
-            .onTapGesture {
-                viewModel.handleCardWasTapped(cardID: card.id)
-            }
         }
     }
 }

@@ -26,10 +26,11 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
             let faceUpIndices = cardModels.indices.filter { index in cardModels[index].isFaceUp }
             return faceUpIndices.count == 1 ? faceUpIndices.first : nil
         }
-        set { cardModels.indices.forEach { cardModels[$0].isFaceUp = (newValue == $0)} }
+        set {
+            cardModels.indices.forEach { cardModels[$0].isFaceUp = (newValue == $0)}
+        }
     }
     
-    // TODO: delay logic to flip card over when the cards dont match
     mutating func chooseACard(at cardID: String) {
         if let index = self.cardModels.firstIndex(where: { $0.id == cardID}) {
             if !cardModels[index].isFaceUp && !cardModels[index].isMatched {
@@ -38,35 +39,22 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
                         cardModels[index].isMatched = true
                         cardModels[potentialMatchIndex].isMatched = true
                         score += 2
+                    } else {
+                        if cardModels[index].hasUserSeenCard {
+                            score -= 1
+                        }
                     }
                 } else {
                     for index in cardModels.indices {
                         cardModels[index].isFaceUp = false
                     }
                     singleCardSelectedIndex = index
-                   // score -= 1
+                    cardModels[index].hasUserSeenCard = true
+
                 }
                 cardModels[index].isFaceUp = true
             }
         }
-//        if singleCardSelectedIndex == nil {
-//            singleCardSelectedIndex = index
-//            self.cardModels[index!].isFaceUp = true
-//        } else {
-//            let potentialMatch = self.cardModels[index!]
-//            let previousCard = self.cardModels[singleCardSelectedIndex!]
-//            self.cardModels[index!].isFaceUp = true
-//            if potentialMatch.content == previousCard.content {
-//                self.cardModels[index!].isMatched = true
-//                self.cardModels[singleCardSelectedIndex].isMatched = true
-//                singleCardSelectedIndex = nil
-//                score += 2
-//            } else {
-//                self.cardModels[singleCardSelectedIndex!].isFaceUp = false
-//                singleCardSelectedIndex = index
-//                score -= 1
-//            }
-//        }
     }
     
     mutating func updatePairsOfCards(cards numberOfPairsOfCards : Int) {
@@ -107,12 +95,15 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     
     struct CardModel: Identifiable,Equatable {
         var id: String
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
+        var isFaceUp: Bool
+        var isMatched: Bool
+        var hasUserSeenCard = false
         var content: CardContent
         
-        init(id: String, content: CardContent) {
+        init(id: String, isFaceUp: Bool = false, isMatched: Bool = false, content: CardContent) {
             self.id = id
+            self.isFaceUp = isFaceUp
+            self.isMatched = isMatched
             self.content = content
         }
     }
