@@ -24,7 +24,7 @@ struct CardView: View {
                 base
                     .fill(card.isFaceUp ? .white : .indigo)
                     .stroke(card.isFaceUp ? .purple : .black, lineWidth: 3)
-                Circle()
+                Pie(endAngle: .degrees(240))
                     .opacity(0.3)
                     .overlay(content: {
                         Text(card.content)
