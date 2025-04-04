@@ -9,13 +9,14 @@ import SwiftUI
 
 struct CardView: View {
     typealias CardModel = MemoryGameModel<String>.CardModel
-    @ObservedObject private var viewModel: MemoryGameViewModel
+    let action: () -> Void
     let card: CardModel
     
-    init(viewModel: MemoryGameViewModel, card: CardModel) {
-        self.viewModel = viewModel
+    init(action: @escaping() -> Void, card: CardModel) {
+        self.action = action
         self.card = card
     }
+    
     var body: some View {
         let base =  RoundedRectangle(cornerRadius: 10, style: .circular)
         ZStack {
@@ -40,7 +41,7 @@ struct CardView: View {
         }
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
         .onTapGesture {
-            viewModel.handleCardWasTapped(cardID: card.id)
+            action()
         }
     }
 }
@@ -50,16 +51,9 @@ struct CardView_Previews: PreviewProvider {
     static let viewModel = MemoryGameViewModel()
     
     static var previews: some View {
-        VStack {
-            HStack {
-                CardView(viewModel: viewModel, card: Card(id: "1", isFaceUp: true, content: "❤️"))
-                CardView(viewModel: viewModel, card: Card(id: "2", isFaceUp: false, content: "A"))
-            }
-            HStack {
-                CardView(viewModel: viewModel, card: Card(id: "1", isMatched: true, content: "A"))
-                CardView(viewModel: viewModel, card: Card(id: "1", isMatched: false, content: "A"))
-            }
+        HStack {
+            CardView(action: {}, card: Card(id: "1", isFaceUp: true, content: "❤️"))
+            CardView(action: {}, card: Card(id: "2", isFaceUp: false, content: "X"))
         }
-        
     }
 }

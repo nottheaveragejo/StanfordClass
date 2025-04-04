@@ -81,8 +81,8 @@ struct MemoryGameView: View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 85))]) {
                 ForEach($viewModel.cardModels.indices, id: \.self) { card in
-                    CardView(viewModel: viewModel, card: viewModel.cardModels[card])
-                }
+                    CardView(action: { viewModel.handleCardWasTapped(cardID: viewModel.cardModels[card].id) }, card: viewModel.cardModels[card])
+                        }
             }
             .padding(.horizontal)
         }

@@ -93,7 +93,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         cardModels.shuffle()
     }
     
-    struct CardModel: Identifiable,Equatable {
+    struct CardModel: Identifiable, Equatable {
         var id: String
         var isFaceUp: Bool
         var isMatched: Bool
