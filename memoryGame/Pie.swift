@@ -24,7 +24,6 @@ struct Pie: Shape {
             )
             path.move(to: center)
             path.addLine(to: start)
-            
             path.addArc(center: center,
                      radius: radius,
                      startAngle: startAngle,
