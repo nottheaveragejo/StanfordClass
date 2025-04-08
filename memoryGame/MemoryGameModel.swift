@@ -33,6 +33,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     
     mutating func chooseACard(at cardID: String) {
         if let index = self.cardModels.firstIndex(where: { $0.id == cardID}) {
+            print("cardModels[index] \(cardModels[index].id) cardID \(cardID)")
             if !cardModels[index].isFaceUp && !cardModels[index].isMatched {
                 if let potentialMatchIndex = singleCardSelectedIndex {
                     if cardModels[index].content == cardModels[potentialMatchIndex].content {
@@ -90,12 +91,24 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
     }
     
     mutating func shuffle() {
-        cardModels.shuffle()
+        let updatedCards = cardModels.shuffled()
+        print("before \(cardModels)")
+        cardModels = []
+        cardModels = updatedCards
+        let newCardContent = cardModels.map(\.content)
+        print("after \(cardModels)")
+        cardsContent = newCardContent
     }
     
     struct CardModel: Identifiable, Equatable {
         var id: String
-        var isFaceUp: Bool
+        var isFaceUp = false {
+            didSet {
+                if oldValue && !isFaceUp {
+                    hasUserSeenCard = true
+                }
+            }
+        }
         var isMatched: Bool
         var hasUserSeenCard = false
         var content: CardContent

@@ -9,7 +9,11 @@ import Foundation
 
 class MemoryGameViewModel: ObservableObject {
     typealias CardModel = MemoryGameModel<String>.CardModel
-    private var model: MemoryGameModel<String>
+    @Published private var model: MemoryGameModel<String> {
+        willSet {
+            cardModels = model.cardModels
+        }
+    }
     
     @Published var theme: Theme
     @Published var themeName: String
@@ -21,14 +25,14 @@ class MemoryGameViewModel: ObservableObject {
         self.theme = .japanese
         self.themeName = Theme.japanese.name
         self.model = MemoryGameModel(cardsContent: Theme.japanese.content, numberOfPairsOfCards: 5)
-        cardModels =  model.cardModels
+        cardModels = MemoryGameModel(cardsContent: Theme.japanese.content, numberOfPairsOfCards: 5).cardModels
         self.numberOfPairsOfCards = 5
         self.score = model.score
     }
     
     func shuffle() {
         model.shuffle()
-        cardModels =  model.cardModels
+       cardModels = model.cardModels
     }
     
     func changeCardTheme() {
@@ -52,7 +56,7 @@ class MemoryGameViewModel: ObservableObject {
     
     func handleCardWasTapped(cardID: String) {
         model.chooseACard(at: cardID)
-        cardModels = model.cardModels
+       // cardModels = model.cardModels
         score = model.score
     }
     

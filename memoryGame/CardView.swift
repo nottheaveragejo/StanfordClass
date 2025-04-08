@@ -26,14 +26,19 @@ struct CardView: View {
                     .minimumScaleFactor(0.01)
                     .aspectRatio(1, contentMode: .fit)
                     .padding(10)
+                    .rotationEffect(.degrees(card.isMatched ? 360 : 0))
+                    .animation(.linear(duration: 2).repeatForever(autoreverses: false), value: card.isMatched)
                     .opacity(card.isFaceUp ? 1 : 0)
-
+                    .opacity(card.isFaceUp ? 1 : 0)
+                
             })
             .padding(10)
             .modifier(Cardify(isFaceUp: card.isFaceUp, isMatched: card.isMatched))
             .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
             .onTapGesture {
-                action()
+                withAnimation(.bouncy(duration: 1)) {
+                    action()
+                }
             }
     }
 }
@@ -44,7 +49,7 @@ struct CardView_Previews: PreviewProvider {
     
     static var previews: some View {
         HStack {
-            CardView(action: {}, card: Card(id: "1", isFaceUp: true, content: "❤️"))
+            CardView(action: {}, card: Card(id: "1", isFaceUp: true, isMatched: true, content: "❤️"))
             CardView(action: {}, card: Card(id: "2", isFaceUp: false, content: "X"))
         }
     }
