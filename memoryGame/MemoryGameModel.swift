@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUICore
 
-struct MemoryGameModel<CardContent> where CardContent: Equatable {
+class MemoryGameModel<CardContent>: ObservableObject where CardContent: Equatable {
     private var secondCardSelectedIndex: Int? = nil
     var cardModels: [CardModel] = []
     private var cardsContent: [CardContent]
@@ -31,19 +31,17 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         }
     }
     
-    mutating func chooseACard(at cardID: String) {
+    func chooseACard(at cardID: String) {
         if let index = self.cardModels.firstIndex(where: { $0.id == cardID}) {
-            print("cardModels[index] \(cardModels[index].id) cardID \(cardID)")
             if !cardModels[index].isFaceUp && !cardModels[index].isMatched {
                 if let potentialMatchIndex = singleCardSelectedIndex {
                     if cardModels[index].content == cardModels[potentialMatchIndex].content {
                         cardModels[index].isMatched = true
                         cardModels[potentialMatchIndex].isMatched = true
                         score += 2
-                    } else {
-                        if cardModels[index].hasUserSeenCard {
-                            score -= 1
-                        }
+                    }
+                    if cardModels[index].hasUserSeenCard {
+                        score -= 1
                     }
                 } else {
                     for index in cardModels.indices {
@@ -51,19 +49,19 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
                     }
                     singleCardSelectedIndex = index
                     cardModels[index].hasUserSeenCard = true
-
                 }
                 cardModels[index].isFaceUp = true
+
             }
         }
     }
     
-    mutating func updatePairsOfCards(cards numberOfPairsOfCards : Int) {
+    func updatePairsOfCards(cards numberOfPairsOfCards : Int) {
         self.numberOfPairsOfCards = numberOfPairsOfCards
         createCardModels(numberOfPairsOFCards: self.numberOfPairsOfCards)
     }
     
-    mutating func updateCardContent(themeContent: [String]) {
+    func updateCardContent(themeContent: [String]) {
         for index in self.cardModels.indices {
             if index % 2 == 0 {
                 let themeIndex = index/2
@@ -76,7 +74,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         }
     }
     
-    mutating func createCardModels(numberOfPairsOFCards: Int = 5) {
+     func createCardModels(numberOfPairsOFCards: Int = 5) {
         var updatedCardModels: [CardModel] = []
         if self.numberOfPairsOfCards == 0 {
             cardModels = []
@@ -90,7 +88,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         cardModels = updatedCardModels
     }
     
-    mutating func shuffle() {
+    func shuffle() {
         let updatedCards = cardModels.shuffled()
         print("before \(cardModels)")
         cardModels = []

@@ -83,8 +83,11 @@ struct MemoryGameView: View {
                 ForEach($viewModel.cardModels) { cardModel in
                     CardView(action: {
                         viewModel.handleCardWasTapped(cardID: cardModel.id)
-                    } , card: cardModel.wrappedValue )
-                    
+                    },
+                             card: cardModel.wrappedValue,
+                             score: viewModel.score
+                    )
+                    .overlay(FlyingScore(model: cardModel.wrappedValue))
                 }
             }
             .padding(.horizontal)

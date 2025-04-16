@@ -32,7 +32,7 @@ class MemoryGameViewModel: ObservableObject {
     
     func shuffle() {
         model.shuffle()
-       cardModels = model.cardModels
+        cardModels = model.cardModels
     }
     
     func changeCardTheme() {
@@ -56,8 +56,8 @@ class MemoryGameViewModel: ObservableObject {
     
     func handleCardWasTapped(cardID: String) {
         model.chooseACard(at: cardID)
-       // cardModels = model.cardModels
         score = model.score
+        cardModels = model.cardModels
     }
     
     enum Theme: CaseIterable {
